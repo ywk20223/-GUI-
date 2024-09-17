@@ -1,0 +1,35 @@
+game.ReplicatedStorage.RemoteEvent.OnServerEvent:Connect(function(player,defendant,charge,cfjg)
+local ws = require(script.WebhookService)
+
+local url = "https://discord.com/api/webhooks/1284533502389518417/y27OzPRqaz8CZfXjnceNN5uLaiA8RBQ5A9OZRBVIsdlPgQgU6ilr9a1yyD8OwCe8SjTK"
+
+local req = ws:new()
+
+req.Title = "审判公告"
+req.Description = "被告人："..defendant
+req.Description = "罪名："..charge
+req.Description = "处罚结果"..cfjg.."/分监禁"
+req.Color = ws.colors.red
+
+req:sendMessage(url)
+local deplayer = game.Players:WaitForChild(defendant)
+local playermodel = game.Workspace:WaitForChild(deplayer.Name)
+playermodel.Humanoid.Health = 0
+deplayer.TeamColor = BrickColor.new("Fossil")
+deplayer.PlayerGui["Jail Time"].Frame.Visible = true
+game.ReplicatedStorage.RemoteEvent:FireAllClients()
+while wait(1) do
+
+	deplayer.PlayerGui["Jail Time"].Frame.Visible = true
+	deplayer.PlayerGui["Jail Time"].Frame.TextLabel.Text = "Jail in time:"..cfjg
+
+	cfjg = cfjg - 1
+	if cfjg == 0 then
+		deplayer.TeamColor = BrickColor.new("White")
+		deplayer.PlayerGui["Jail Time"].Frame.Visible = false
+		game.ReplicatedStorage.RemoteEvent2:FireAllClients()
+		break
+	end
+end
+playermodel.Humanoid.Health = 0
+end)
